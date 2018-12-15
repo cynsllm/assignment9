@@ -134,7 +134,7 @@ def bot_message(input):
         counter += 1
         return greetings(input), "excited"
     #elif d.check(input) is True:
-    if any(elem in input for elem in link_list):
+    elif any(elem in input for elem in link_list):
         return find_items(input), "ok"
     elif "you like" in input and input.endswith("?"):
         return do_you_like(input), "dog"
