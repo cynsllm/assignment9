@@ -6,6 +6,8 @@ import json
 import random
 import requests
 from jokes import question_joke
+import enchant
+d = enchant.Dict("en_US")
 counter = 0
 
 link_list = {
@@ -109,6 +111,10 @@ def error_message():
     answer_list = ["Sorry, I can't help you.", "Sorry, I think I cannot help you.", "Sorry, ask another robot who may help you!"]
     return random.choice(answer_list)
 
+def not_english():
+    answer_list = ["What is that language?", "Sorry, I speak english only!", "Go talk to another robot which speaks your weird language!"]
+    return random.choice(answer_list)
+
 def like_anim():
     anim_list = ["dancing", "excited"]
     return random.choice(anim_list)
@@ -127,36 +133,41 @@ def bot_message(input):
     if counter == 0:
         counter += 1
         return greetings(input), "excited"
-    elif any(elem in input for elem in link_list):
-        return find_items(input), "ok"
-    elif "you like" in input and input.endswith("?"):
-        return do_you_like(input), "dog"
-    elif any(elem in input for elem in like_list):
-        return result(input), like_anim()
-    elif any(elem in input for elem in dislike_list):
-        return result(input), "heartbroke"
-    elif any(elem in input for elem in curse_list):
-        return swear_words(input), curse_anim()
-    elif any(elem in input for elem in joke_list):
-        return question_joke(), joke_anim()
-    elif any(elem in input for elem in city_list):
-        return weather_2(input), "ok"
-    elif any(elem in input for elem in weather_list):
-        return weather_1(), "ok"
-    elif any(elem in input for elem in hello_list):
-        return start_conversation(), "excited"
-    elif any(elem in input for elem in end_conversation_list):
-        return end_conversation(), "takeoff"
-    elif input.startswith("how are"):
-        return how_are_you(), "excited"
-    elif "your name" in input:
-        return whats_your_name(), "bored"
-    elif "?" in input:
-        return question(input), "waiting"
-    elif any(elem in input for elem in can_list):
-        return can_you(), "no"
     else:
-        return error_message(), "confused"
+        if d.check(input) is True:
+            if any(elem in input for elem in link_list):
+                return find_items(input), "ok"
+            elif "you like" in input and input.endswith("?"):
+                return do_you_like(input), "dog"
+            elif any(elem in input for elem in like_list):
+                return result(input), like_anim()
+            elif any(elem in input for elem in dislike_list):
+                return result(input), "heartbroke"
+            elif any(elem in input for elem in curse_list):
+                return swear_words(input), curse_anim()
+            elif any(elem in input for elem in joke_list):
+                return question_joke(), joke_anim()
+            elif any(elem in input for elem in city_list):
+                return weather_2(input), "ok"
+            elif any(elem in input for elem in weather_list):
+                return weather_1(), "ok"
+            elif any(elem in input for elem in hello_list):
+                return start_conversation(), "excited"
+            elif any(elem in input for elem in end_conversation_list):
+                return end_conversation(), "takeoff"
+            elif input.startswith("how are"):
+                return how_are_you(), "excited"
+            elif "your name" in input:
+                return whats_your_name(), "bored"
+            elif "?" in input:
+                return question(input), "waiting"
+            elif any(elem in input for elem in can_list):
+                return can_you(), "no"
+            else:
+                return error_message(), "confused"
+        else:
+            return not_english(), "confused"
+
 
 
 @route('/', method='GET')
