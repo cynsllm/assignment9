@@ -36,9 +36,8 @@ def question_joke():
         "How do French tanks work?": "They have one forward gear and six reverse ones.",
         "Why don't the French eat M&M candies?": "They're too hard to peel."
     }
-    #print(random.choice(dict.items()))
     joke = random.choice(list(dict))
-    return joke + dict[joke]
-    #print("Key: {}, Value: {}".format(item[0], item[1]))
+    return joke + " " + dict[joke]
+
 
 

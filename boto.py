@@ -5,92 +5,37 @@ from bottle import route, run, template, static_file, request
 import json
 import random
 import requests
-import enchant
-import enchant
-d = enchant.Dict("en_US")
-from test import check_word
-import re
 from jokes import question_joke
 counter = 0
 
-#import webbrowser
-#webbrowser.open("https://www.asos.com/bariano/bariano-tiered-fishtail-mesh-maxi-dress-in-navy/prd/10419456?clr=navy&SearchQuery=&cid=8799&gridcolumn=1&gridrow=1&gridsize=4&pge=1&pgesize=72&totalstyles=7085")
-
-link_list = {"skirt": "https://www.asos.com/yellow-skirt", "dress": "https://www.asos.com/pink-dress", "jean":"https://www.asos.com/blue-jeans", "pant":"https://www.asos.com/black-pant", "jacket":"https://www.asos.com/leather-jacket", "accessory":"https://www.asos.com/soft-hat", "shirt":"https://www.asos.com/white-shirt", "coat":"https://www.asos.com/red-coat", "sweat":"https://www.asos.com/grey-sweat", "shoe":"https://www.asos.com/leather-shoes", "sneaker":"https://www.asos.com/nike-running",
-                 "clothe":"https://www.asos.com", "sock":"https://www.asos.com/multicolor-socks", "boxer":"https://www.asos.com/men-boxers", "suit":"https://www.asos.com/blue-suit", "blouse":"https://www.asos.com/oversized-blouse", "tie":"https://www.asos.com/red-tie", "top":"https://www.asos.com/night-tops", "trouser":"https://www.asos.com/black-trousers", "short":"https://www.asos.com/sexy-short", "glove":"https://www.asos.com/leather-gloves", "jumper":"https://www.asos.com/white-jumper",
-                 "swim":"https://www.asos.com/swimsuits", "bra":"https://www.asos.com/lingerie", "boot":"leather-boots"}
+link_list = {
+    "skirt": "https://www.asos.com/yellow-skirt", "dress": "https://www.asos.com/pink-dress", "jean":"https://www.asos.com/blue-jeans", "pant":"https://www.asos.com/black-pant", "jacket":"https://www.asos.com/leather-jacket", "accessory":"https://www.asos.com/soft-hat", "shirt":"https://www.asos.com/white-shirt", "coat":"https://www.asos.com/red-coat", "sweat":"https://www.asos.com/grey-sweat", "shoe":"https://www.asos.com/leather-shoes", "sneaker":"https://www.asos.com/nike-running",
+    "clothe":"https://www.asos.com", "sock":"https://www.asos.com/multicolor-socks", "boxer":"https://www.asos.com/men-boxers", "suit":"https://www.asos.com/blue-suit", "blouse":"https://www.asos.com/oversized-blouse", "tie":"https://www.asos.com/red-tie", "top":"https://www.asos.com/night-tops", "trouser":"https://www.asos.com/black-trousers", "short":"https://www.asos.com/sexy-short", "glove":"https://www.asos.com/leather-gloves", "jumper":"https://www.asos.com/white-jumper",
+    "swim":"https://www.asos.com/swimsuits", "bra":"https://www.asos.com/lingerie", "boot":"leather-boots"
+}
 like_list = ["yes", "wow", "beautiful", "amazing", "like", "nice", "cool", "great", "good", "much", "yeah", "yep", "love"]
 dislike_list = ["no", "not", "aweful", "horrible", "bad", "nope", "dislike", "hate"]
 curse_list = ["fuck", "bitch", "shit", "piss", "dick", "asshole", "bastard", "damn"]
 joke_list = ["joke", "laugh", "fun", "smile", "story", "another", "again"]
 weather_list = ["weather", "forecast", "temp", "degree", "celcius", "sun", "cloud", "rain", "sky", "hot", "cold"]
 city_list = ["paris", "london", "tel aviv", "new york", "jerusalem"]
-end_conversation_words = ["bye", "see you", "to leave", "to go"]
+end_conversation_list = ["bye", "see you", "to leave", "to go"]
 hello_list = ["hello", "hi", "up", "hey"]
-
-
-
+can_list = ["can you", "possible", "can I"]
 
 def greetings(input):
-    greeting_list = ["Nice to meet you {0}!", "Hello {0}, what's up?", "Hi {0}!"]
-    shop_list = ["What would you like to shop (pant, jacket, shirt...)?", "What kind of item are you looking for? Shoes? Skirt?...", "What are you looking for exactly? Dress, glasses...", "What kind of clothe do you need?"]
-    greeting = random.choice(greeting_list) + " I'am your personal shopper. " + random.choice(shop_list)
-    input = input.lower()
+    answer1_list = ["Nice to meet you {0}!", "Hello {0}, what's up?", "Hi {0}!", "Hey {0}!"]
+    answer2_list = ["What would you like to shop (pant, jacket, shirt...)?", "What kind of item are you looking for? Shoes? Skirt?...", "What are you looking for exactly? Dress, glasses...", "What kind of clothes do you need?"]
+    answer = random.choice(answer1_list) + " I'am your personal shopper. " + random.choice(answer2_list)
     input = input.split()
-    return greeting.format(input[-1].title())
-
+    return answer.format(input[-1].title())
 
 def find_items(input):
-    list = ["Go check this link ", "I got this for you ", "I found something cool "]
-    link_list = {"skirt": "https://www.asos.com/yellow-skirt", "dress": "https://www.asos.com/pink-dress", "jean":"https://www.asos.com/blue-jeans", "pant":"https://www.asos.com/black-pant", "jacket":"https://www.asos.com/leather-jacket", "accessory":"https://www.asos.com/soft-hat", "shirt":"https://www.asos.com/white-shirt", "coat":"https://www.asos.com/red-coat", "sweat":"https://www.asos.com/grey-sweat", "shoe":"https://www.asos.com/leather-shoes", "sneaker":"https://www.asos.com/nike-running",
-                 "clothe":"https://www.asos.com", "sock":"https://www.asos.com/multicolor-socks", "boxer":"https://www.asos.com/men-boxers", "suit":"https://www.asos.com/blue-suit", "blouse":"https://www.asos.com/oversized-blouse", "tie":"https://www.asos.com/red-tie", "top":"https://www.asos.com/night-tops", "trouser":"https://www.asos.com/black-trousers", "short":"https://www.asos.com/sexy-short", "glove":"https://www.asos.com/leather-gloves", "jumper":"https://www.asos.com/white-jumper",
-                 "swim":"https://www.asos.com/swimsuits", "bra":"https://www.asos.com/lingerie", "boot":"leather-boots"}
-    result = [" what do you think?", " Do you like it?"]
+    answer1_list = ["Go check this link: ", "I got this for you there", "I found something cool on this link"]
+    answer2_list = [" What do you think?", " Do you like it?", " So, what you think?"]
     for key in link_list:
         if key in input:
-            return random.choice(list) + link_list[key] + random.choice(result)
-
-
-def question(input):
-    if input.lower().startswith(("how", "what", "why", "where", "who")):
-        answer_list = ["Sorry, I'am not allowed to answer this type of question...", "I don't understand please ask again", "What do you mean exactly ?", "Sorry, I can't tell you...", "I don't know, ask another robot!"]
-        answer = random.choice(answer_list)
-    else:
-        answer_list = ["yes", "no"]
-        answer = random.choice(answer_list)
-    return answer
-
-
-def result(input):
-    for elem in like_list:
-        if elem in input:
-            list = ["Great, I'm happy to help you!", "Cool, we have the same style!", "Yessss I was pretty sure that you would love it"]
-            return random.choice(list)
-    for elem in dislike_list:
-        if elem in input:
-            list = ["Sorry, I'll try to be better next time!", "Maybe you'll be interested in this: XXXX"]
-            return random.choice(list)
-    return "i don't know"
-
-def swear_words():
-    return "you have a problem ?"
-
-def start_conversation():
-    answer_list = ["Hello dear!", "Hi my friend!", "What's up!", "Hey! I'm happy to see you again!", "How are you today ?", "Hey bro!"]
-    return random.choice(answer_list)
-
-def end_conversation():
-    end_conversation_list = ["Do you really want to end the conversation?", "I hope you'll come and talk soon!", "No problem, see you next time!", "Okay, we'll continue our conversation later!"]
-    end_conversation = random.choice(end_conversation_list)
-    return end_conversation
-
-def how_are_you():
-    answer_list = ["I'm good thank you!", "I need holidays, but I'm okay...", "I'm so tired, I ve been working all day!", "Great! What about you?"]
-    return random.choice(answer_list)
-
-def whats_your_name():
-    answer_list = ["I told you, I'm Boto!", "My name is Boto but you can call me Bouskoutou", "Boto! Don't you remember?", "You have a really short memory..."]
-    return random.choice(answer_list)
+            return random.choice(answer1_list) + link_list[key] + random.choice(answer2_list)
 
 def do_you_like(input):
     input = input.split()
@@ -99,52 +44,117 @@ def do_you_like(input):
         if input[elem] == "like":
             return random.choice(answer_list).format(input[elem + 1])
 
+def question(input):
+    if input.startswith(("how", "what", "why", "where", "who")):
+        answer_list = ["Sorry, I'am not allowed to answer this type of question...", "I don't understand please ask again", "What do you mean exactly ?", "Sorry, I can't tell you...", "I don't know, ask another robot!"]
+        answer = random.choice(answer_list)
+    else:
+        answer_list = ["Yes", "No"]
+        answer = random.choice(answer_list)
+    return answer
+
+def result(input):
+    for elem in like_list:
+        if elem in input:
+            answer_list = ["Great, I'm happy to help you!", "Cool, we have the same style!", "Yes I was pretty sure that you would love it!"]
+            return random.choice(answer_list)
+    for elem in dislike_list:
+        if elem in input:
+            answer_list = ["Sorry, I'll try to be better next time!", "Maybe you'll be interested in this: https://www.asos.com/blue-jeans", "Let's try again! What do you want me to fetch?"]
+            return random.choice(answer_list)
+
+def swear_words(input):
+    input = input.split()
+    answer_list = ["Go to hell!", "What's wrong with you?", "Go talk to another robot bitch!", "Did you say {0}?", "{0} yourself!"]
+    for elem in range(len(input)):
+        if input[elem] in curse_list:
+            return random.choice(answer_list).format(input[elem])
+
+def start_conversation():
+    answer_list = ["Hello dear!", "Hi my friend!", "What's up!", "Hey! I'm happy to see you again!", "How are you today ?", "Hey bro!"]
+    return random.choice(answer_list)
+
+def end_conversation():
+    answer_list = ["Do you really want to end the conversation?", "I hope you'll come and talk soon!", "No problem, see you next time!", "Okay, we'll continue our conversation later!"]
+    return random.choice(answer_list)
+
+def how_are_you():
+    answer_list = ["I'm good thank you!", "I need holidays, but I'm okay...", "I'm so tired, I ve been working all day!", "Great! What about you?"]
+    return random.choice(answer_list)
+
+def whats_your_name():
+    answer_list = ["I told you, I'm Boto!", "Boto! Don't you remember?", "You have a really short memory..."]
+    return random.choice(answer_list)
+
 def weather_1():
-    return "Which city?"
+    answer_list = ["Please be more precised. Which city?", "No problem! Which city?", "Where do you live?", "Mmmm, I need to know the city!"]
+    return random.choice(answer_list)
 
 def weather_2(input):
-    city_of_interest = input
-    r = requests.get('https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID={}'.format(city_of_interest, "32877c581bf458cb18d87601eca00837"))
-    weather_request_content = json.loads(r.content)
-    city_temp = (weather_request_content['main']['temp'])
-    city_humidity = (weather_request_content['main']['humidity'])
-    weather_desc = (weather_request_content['weather'][0]['description'])
-    return (weather_desc, city_temp, city_humidity)
+    input = input.split()
+    for elem in range(len(input)):
+        if input[elem] in city_list:
+            r = requests.get('https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&APPID={}'.format(input[elem], "32877c581bf458cb18d87601eca00837"))
+            weather_request_content = json.loads(r.content)
+            description = (weather_request_content["weather"][0]["description"])
+            temperature = (weather_request_content["main"]["temp"])
+            humidity = (weather_request_content["main"]["humidity"])
+            return ("The weather in " + input[elem] + " is {0}, with {1}°C and {2}% humidity".format(description, temperature, humidity))
+
+def can_you():
+    answer_list = ["Oh no...", "So boring...", "Don't make me waist my time"]
+    return random.choice(answer_list)
 
 def error_message():
-    return "sorry i can't help you"
+    answer_list = ["Sorry, I can't help you.", "Sorry, I think I cannot help you.", "Sorry, ask another robot who may help you!"]
+    return random.choice(answer_list)
+
+def like_anim():
+    anim_list = ["dancing", "excited"]
+    return random.choice(anim_list)
+
+def joke_anim():
+    anim_list = ["giggling", "laughing"]
+    return random.choice(anim_list)
+
+def curse_anim():
+    anim_list = ["crying", "afraid"]
+    return random.choice(anim_list)
 
 def bot_message(input):
+    input = input.lower()
     global counter
     if counter == 0:
         counter += 1
         return greetings(input), "excited"
     elif any(elem in input for elem in link_list):
-        return find_items(input), "crying"
-    elif "you like" in input and input.lower().endswith("?"):
-        return do_you_like(input), "no"
+        return find_items(input), "ok"
+    elif "you like" in input and input.endswith("?"):
+        return do_you_like(input), "dog"
     elif any(elem in input for elem in like_list):
-        return result(input), "dog"
+        return result(input), like_anim()
     elif any(elem in input for elem in dislike_list):
-        return result(input), "dancing"
+        return result(input), "heartbroke"
     elif any(elem in input for elem in curse_list):
-        return swear_words(), "ok"
+        return swear_words(input), curse_anim()
     elif any(elem in input for elem in joke_list):
-        return question_joke(), "giggling"
+        return question_joke(), joke_anim()
+    elif any(elem in input for elem in city_list):
+        return weather_2(input), "ok"
+    elif any(elem in input for elem in weather_list):
+        return weather_1(), "ok"
     elif any(elem in input for elem in hello_list):
         return start_conversation(), "excited"
-    elif any(elem in input for elem in end_conversation_words):
-        return end_conversation(), "no"
-    elif input.lower().startswith("how are"):
+    elif any(elem in input for elem in end_conversation_list):
+        return end_conversation(), "takeoff"
+    elif input.startswith("how are"):
         return how_are_you(), "excited"
     elif "your name" in input:
-        return whats_your_name(), "dancing"
+        return whats_your_name(), "bored"
     elif "?" in input:
-        return question(input), "ok"
-    elif any(elem in input for elem in weather_list):
-        return weather_1(), "dog"
-    elif any(elem in input for elem in city_list):
-        return weather_2(input), "heartbroke"
+        return question(input), "waiting"
+    elif any(elem in input for elem in can_list):
+        return can_you(), "no"
     else:
         return error_message(), "confused"
 
@@ -164,7 +174,7 @@ def chat():
 @route("/test", method='POST')
 def chat():
     user_message = request.POST.get('msg')
-    return json.dumps({"animation": "inlove", "msg": user_message})
+    return json.dumps({"animation": "waiting", "msg": user_message})
 
 
 @route('/js/<filename:re:.*\.js>', method='GET')
