@@ -6,7 +6,11 @@ import json
 import random
 import requests
 from jokes import question_joke
+import bottle
 import os
+from os import environ as env
+from sys import argv
+DEBUG = os.environ.get("DEBUG")
 
 counter = 0
 
@@ -208,7 +212,7 @@ def images(filename):
     #main()
 
 
-if os.environ.get('APP_LOCATION') == 'heroku':
-    run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+if DEBUG:
+	bottle.run(host='localhost', port=7000)
 else:
-    run(host='localhost', port=8080, debug=True)
+	bottle.run(host='0.0.0.0', port=argv[1])
