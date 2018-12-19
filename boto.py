@@ -1,16 +1,18 @@
 """
 This is the template server side for ChatBot
 """
+import bottle
 from bottle import route, run, template, static_file, request
 import json
 import random
 import requests
 from jokes import question_joke
-import bottle
 import os
-from os import environ as env
+
 from sys import argv
+
 DEBUG = os.environ.get("DEBUG")
+bottle.debug(True)
 
 counter = 0
 
