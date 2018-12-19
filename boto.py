@@ -1,16 +1,13 @@
 """
 This is the template server side for ChatBot
 """
-from bottle import route, run, template, static_file, request, default_app
+from bottle import route, run, template, static_file, request
 import json
 import random
 import requests
 from jokes import question_joke
 import os
 
-
-import enchant
-d = enchant.Dict("en_US")
 counter = 0
 
 link_list = {
@@ -136,7 +133,6 @@ def bot_message(input):
     if counter == 0:
         counter += 1
         return greetings(input), "excited"
-    #elif d.check(input) is True:
     elif any(elem in input for elem in link_list):
         return find_items(input), "ok"
     elif "you like" in input and input.endswith("?"):
@@ -167,8 +163,7 @@ def bot_message(input):
         return can_you(), "no"
     else:
         return error_message(), "confused"
-    #else:
-        #return not_english(), "confused"
+
 
 
 
