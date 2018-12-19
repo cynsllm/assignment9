@@ -20,7 +20,7 @@ dislike_list = ["no", "not", "aweful", "horrible", "bad", "nope", "dislike", "ha
 curse_list = ["fuck", "bitch", "shit", "piss", "dick", "asshole", "bastard", "damn"]
 joke_list = ["joke", "laugh", "fun", "smile", "story", "another", "again"]
 weather_list = ["weather", "forecast", "temp", "degree", "celcius", "sun", "cloud", "rain", "sky", "hot", "cold"]
-city_list = ["paris", "london", "tel aviv", "new york", "jerusalem"]
+city_list = ["paris", "london", "tel aviv", "new york", "jerusalem", ""]
 end_conversation_list = ["bye", "see you", "to leave", "to go"]
 hello_list = ["hello", "hi", "up", "hey"]
 can_list = ["can you", "possible", "can I"]
@@ -48,7 +48,7 @@ def do_you_like(input):
 
 def question(input):
     if input.startswith(("how", "what", "why", "where", "who")):
-        answer_list = ["Sorry, I'am not allowed to answer this type of question...", "I don't understand please ask again", "What do you mean exactly ?", "Sorry, I can't tell you...", "I don't know, ask another robot!"]
+        answer_list = ["Sorry, I'am not allowed to answer this type of question...", "What do you mean exactly ?", "Sorry, I can't tell you...", "I don't know, ask another robot!"]
         answer = random.choice(answer_list)
     else:
         answer_list = ["Yes", "No"]
